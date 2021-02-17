@@ -4,7 +4,7 @@ Created on Sun Feb 14 00:01:38 2021
 
 @author: franc
 """
-
+import timeit
 import numpy as np
 import scipy
 import sympy
@@ -90,26 +90,25 @@ plt.legend()
 plt.title("Variables aléatoires générées suivant \n la distribution moyal")
 plt.show()
 
+
 #Num 9
-#Fonction à intégrer pour vérifier le temps de calcul
-def func_eau(T):
-    Scol_eau = t1(T) * eau_liq["n_e"] * (log(t2(T)*Te_max(T) / eau_liq["MEE"]**2) - 2*beta(T)**2)
-    return eau_liq["Densité"]/Scol_eau
+#Fonction à intégrer tout au long du numéro 
+def to_integrate(T):
+    return 1/(Scol(eau_liq["n_e"], T, eau_liq["MEE"]) / eau_liq["Densité"])
+
+#Temps d'intégration par scipy.integrate.quad
 
 
-
-#Fonction calculant la portée des 10 000 proton avec Scipy.integrate.quad
-def proton_range_scipy(b): 
-    for i in b:
-        print(scipy.integrate.quad(func_eau, 0, i))
-
-
-import timeit
-#Permet de mesurer le temps de calcul 
-print("Le temps de calcul pour scipy.integrate.quad est "  /
-      + str(timeit.timeit('[proton_range_scipy(T)]', globals=globals())))
-
-
-
-
-
+def test_1(T):
+    result = np.zeros(10000)
+    for i, value in enumerate(T):
+         result[i] = scipy.integrate.quad(to_integrate, a = 3, b = value, limit = 20, epsabs = 10**-9)[0]
+    return result
+    
+  
+    
+x = test_1(T)
+plt.hist(x, bins = 100)
+plt.ylabel("Nombre de protons")
+plt.xlabel("Portée dans l'eau [cm]")
+plt.show()
