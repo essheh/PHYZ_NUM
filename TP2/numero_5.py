@@ -9,13 +9,14 @@ R0_max = 5.7
 accuracy = 1e-6
 steps = 0.01
 
-def p_graph(R0_max, accuracy, steps):
+def p_graph(R0_max, start, accuracy, steps):
     
 
 #--Calcul itératif du pourcentage de la population qui aura été infecté au terme de la pandémie
 
     #--Paramètres:
     #   R0_max: Nombre de reproduction de base maximale en supposant que le fluctuation commence à 0
+    #   start: Valeur de départ pour l'itérations allant de 0.1 à 1.4
     #   accuracy: précision de l'erreur de p
     #   steps: Bonds par itérations
 
@@ -32,7 +33,7 @@ def p_graph(R0_max, accuracy, steps):
 # R0 loop
 
     for R0 in temp:
-        p1 = 1.0
+        p1 = start
         error = 1.0
     
     # Loop jusqu'à l'erreur établie
@@ -53,4 +54,4 @@ def p_graph(R0_max, accuracy, steps):
     grid()
     show()
         
-p_graph(5.7,1e-6,0.01)
+p_graph(5.7,1,1e-6,0.01)
