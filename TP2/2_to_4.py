@@ -15,7 +15,7 @@ def LJP(x):
 x = np.linspace(0.9,4,1000)
 
 plt.plot(x, LJP(x))
-plt.show()
+#plt.show()
 
 def turning_points(epsilon):
     """
@@ -75,19 +75,49 @@ def LJP_discrete_energy(n, gamma):
         energies.append(midpoint(x1, x2))
     return energies 
 
-print(LJP_discrete_energy(20, 150))
+#print(LJP_discrete_energy(20, 150))
 
 def plot_energy_levels(n, gamma): 
     x_LJP = np.linspace(1.001,1.9,1000)
     for i in range(n):
         epsilon = LJP_discrete_energy(n, gamma)[i]
-        plt.plot(np.linspace(turning_points(epsilon)[0], turning_points(epsilon)[1], 1000), np.full(1000, epsilon) , color = "black", linestyle = "dashed") #Plot the energy levels 
+        #Plot the energy levels 
+        plt.plot(np.linspace(turning_points(epsilon)[0], turning_points(epsilon)[1], 1000), np.full(1000, epsilon) , color = "black", linestyle = "dashed") 
         plt.plot(turning_points(epsilon)[0], epsilon, color = "red",  marker='o') #Plot the first TP
         plt.plot(turning_points(epsilon)[1], epsilon, color = "red",  marker='o') #Plot the second TP 
-    plt.plot(x_LJP, LJP(x_LJP), color = "black") #Plort the Lennard-Jones potential
+    plt.plot(x_LJP, LJP(x_LJP), color = "black") #Plot the Lennard-Jones potential
     plt.show()
 
-plot_energy_levels(20, 150)
+#plot_energy_levels(20, 150)
 
-
+def LJP_discrete_energy_Secant(n, gamma):
+    """
+    The function gives the n first adimensional discrete energy values using the WKB approximation the solve the Schrödinger equation
+    for the Lennard-Jones potential, using the secant method 
+    
+    param 1 n: n is the number of energy levels to find, it must be a positive integer   
+    param 2 gamma: gamma is a constant that varies between each molecule, it must have a positive value 
+    return: The n first adimensional discrete energy values   
+    """ 
+    energies = [] #The list of the n first discrete energy values 
+    def f(epsilon, n): # function that return the value of the function in the equation (3)  
+        func = lambda x: (epsilon - LJP(x))**0.5 # The function to integrate, i.e., (E - V(x))**(1/2) 
+        integral = lambda epsilon: integrate.quad(func, a = turning_points(epsilon)[0], b = turning_points(epsilon)[1])[0] #the integral at the turning_points
+        return integral(epsilon) - (n+0.5)*pi/gamma
+    
+    for i in range(n): # we repeat the loop for the n energies
+        
+        #Initial values of the secant method 
+        x1 = -0.9999999
+        x2 = -0.0000001
+        
+        # From here we start the secant method 
+        for j in range(8):
+            x3 = x2 - f(x2, i) * (x2 - x1) / float(f(x2,i) - f(x1, i))
+            x1, x2 = x2, x3
+        energies.append(x3)
+    
+    return energies 
+print(LJP_discrete_energy(20, 150))
+print(LJP_discrete_energy_Secant(20, 150))
         
