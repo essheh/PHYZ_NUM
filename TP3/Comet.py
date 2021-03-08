@@ -36,6 +36,7 @@ def comet_orbit(x, y, v_x, v_y, t, h):
     y_points = [] #The list of y positions values
     r = np.array([x, y, v_x, v_y], float) #The vector of all coordinates  
   
+    #The Runge-Kutta method starts from here 
     for t in t_points:
         x_points.append(r[0])
         y_points.append(r[1])
