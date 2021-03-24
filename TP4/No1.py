@@ -43,3 +43,5 @@ def v(psi):
 psi = initial_condition(N, L, h)
 v = v(psi)
 print(v)
+
+######Number 2#######
