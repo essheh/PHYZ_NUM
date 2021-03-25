@@ -33,9 +33,9 @@ def initial_condition(N, L, h):
     
 def v(psi):
     v = np.zeros(len(psi), dtype = 'complex_') #Initialize the vector v 
-    n = n = len(psi) - 1 #Last element of vector v 
+    n = len(psi) - 1 #Last element of vector v 
     v[0] = b1 * psi[0] + b2 * (psi[1])
-    v[1:n-1] = b1 * psi[1:n-1] + b2 * (psi[2:n] + psi[0:n-2])
+    v[1:n] = b1 * psi[1:n] + b2 * (psi[2:n+1] + psi[0:n-1])
     v[n] = b1 * psi[n] + b2 * (psi[n-1])
     
     return v
@@ -50,30 +50,33 @@ def A(N):
     A[0, 0] = 0
     A[0, 1:] = a2
     A[1, :] = a1
-    A[2, 0:N-1] = a2
+    A[2, 0:N] = a2
     A[2, N] = 0
     return A 
     
 def Thomas(A, v, N): 
     x = np.zeros(N+1, dtype = 'complex')
+    c_prime = np.zeros(N + 1, dtype = 'complex' )
+    d_prime = np.zeros(N + 1, dtype = 'complex' )
     a_ = A[0, 0:] 
     b_ = A[1, 0:]
     c_ = A[2, 0:]
-    d_ = v[:]
-    c_prime = np.zeros(N + 1, dtype = 'complex' )
-    d_prime = np.zeros(N + 1, dtype = 'complex' )
+    d_ = v[0:]
     
     c_prime[0] = c_[0]/b_[0]
-    c_prime[1: N - 1] = c_[1: N - 1]/(b_[1: N - 1] - a_[1: N - 1] * c_prime[0: N - 2])
+    c_prime[1: N] = c_[1: N]/(b_[1: N] - a_[1: N] * c_prime[0: N - 1])
     d_prime[0] = d_[0]/b_[0] 
-    d_prime[1: N] = (d_[1: N] - a_[1: N] * d_prime[0: N - 1 ])/(b_[1: N] - a_[1: N] * c_prime[0: N - 1])
-    x[N] = d_[N]/b_[N]
-    x[N-1: :-1] = (d_[N-1: :-1] - c_[N-1: :-1]*x[N:0 :-1])/b_[N-1: :-1] 
+    d_prime[1: N+1] = (d_[1: N+1] - a_[1: N+1] * d_prime[0: N])/(b_[1: N+1] - a_[1: N+1] * c_prime[0: N])
+    x[N] = d_prime[N]/b_[N]
+    x[N-1: :-1] = (d_prime[N-1: :-1] - c_prime[N-1: :-1]*x[N:0 :-1])/b_[N-1: :-1] 
     
-    
-    
-    return x 
+    return x, d_prime, d_
 
 A = A(N)
 v = v(psi)
-print(Thomas(A, v, N))
+x, d_prime, d_ = Thomas(A, v, N)
+Ax = np.matmul(A, x)
+print(x) 
+print(d_prime)
+print(d_)
+
