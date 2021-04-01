@@ -19,7 +19,7 @@ b1 = 1 - 1j * h * hbar / (2 * M * a ** 2)
 b2 = - a2
 
 def psi_0(x):
-    return np.exp(-(x-x_0)**2/2*sigma**2)*np.exp(1j*kappa*x)    
+    return np.exp(-(x-x_0)**2/(2*sigma)**2)*np.exp(1j *kappa *x)    
 
 
 def initial_condition(N, L, h): 
@@ -90,19 +90,19 @@ def Thomas(A_tri, v, N):
         
     return x
 
-psi = initial_condition(N, L, h)
-v = v(psi)  
-A_tri = A_tri(N)    
-x = Thomas(A_tri, v, N)
-A = A(N)
-Ax = np.matmul(A, x)
-print(x) 
-print(Ax)
-print(v)
+#psi = initial_condition(N, L, h)
+#v = v(psi)  
+#A_tri = A_tri(N)    
+#x = Thomas(A_tri, v, N)
+#A = A(N)
+#Ax = np.matmul(A, x)
+#print(x) 
+#print(Ax)
+#print(v)
 
-comparison = Ax == v
-equal_arrays = comparison.all()
-print(equal_arrays)
+#comparison = Ax == v
+#equal_arrays = comparison.all()
+#print(equal_arrays)
 
 
 #c_prime[0] = c_[0]/b_[0]
@@ -111,3 +111,21 @@ print(equal_arrays)
 #d_prime[1: N+1] = (d_[1: N+1] - a_[1: N+1] * d_prime[0: N])/(b_[1: N+1] - a_[1: N+1] * c_prime[0: N])
 #x[N] = d_prime[N]
 #x[N-1: :-1] = (d_prime[N-1: :-1] - c_prime[N-1: :-1]*x[N:0 :-1])
+
+#Numéro 3 
+def psi(N, L, h, t):
+    psi = initial_condition(N, L, h) #Initial wave function at time t = 0
+    x = np.linspace(0, L, N+1) 
+    total_steps = int(t//h)  #Number of steps to reach time t
+    v_vector = np.zeros(len(psi))
+    #solution =  [psi]
+    for i in range(total_steps):
+        v_vector = v(psi)
+        psi = Thomas(A_tri(N), v_vector, N) #New wave function at time t + h  
+        #solution.append(psi) 
+    return x, psi  
+
+t = 100*h     
+x, psi = psi(N, L, h, t)
+plt.plot(x, abs(psi)**2) 
+plt.show()
