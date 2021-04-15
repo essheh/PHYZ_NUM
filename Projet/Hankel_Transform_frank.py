@@ -6,6 +6,7 @@ Created on Wed Apr 14 19:49:02 2021
 """
 import numpy as np
 import scipy.special as sp
+import matplotlib.pyplot as plt
 
 #
 def simpson(func, a, b, N):
@@ -47,14 +48,16 @@ def Hankel_transform(func, p, n, L):
     """
     zeros = sp.jn_zeros(n, L+1) # array of the L+1 first zeros of bessel order n  
     value = 0 #Initialize the value 
-    
+    partial_sums = []
     #function to integrate
     def f(x):
         return x*func(x/p)/p**2 * sp.jv(n, x) 
     
     for i in range(L):
-       value += simpson(f, zeros[i], zeros[i+1], 1000)
-    return value 
+       I = simpson(f, zeros[i], zeros[i+1], 1000)
+       value += I
+       partial_sums.append(I)
+    return value, partial_sums 
 
 def f1(x): 
     return x**2
@@ -62,5 +65,8 @@ p = 1
 n = 1 
 L = 3000
 
-p_value = Hankel_transform(f1, p, n, L)
+p_value, partial_sums = Hankel_transform(f1, p, n, L)
 print(p_value)
+x = np.arange(1, len(partial_sums)+1)
+plt.plot(x, partial_sums)
+plt.show()
