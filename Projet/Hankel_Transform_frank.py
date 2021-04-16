@@ -62,8 +62,8 @@ def Hankel_transform(func, p, n, L):
 def f1(x): 
     return x**2
 p = 1
-n = 1 
-L = 3000
+n = 0 
+L = 10
 
 p_value, partial_sums = Hankel_transform(f1, p, n, L)
 print(p_value)
