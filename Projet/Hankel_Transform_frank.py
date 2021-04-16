@@ -4,11 +4,30 @@ Created on Wed Apr 14 19:49:02 2021
 
 @author: franc
 """
+import scipy.integrate
 import numpy as np
 import scipy.special as sp
 import matplotlib.pyplot as plt
 
-#
+def epsilon(terms):
+    """
+    The function returns the Sum of n terms of a serie with the epsilon algorithm.
+    param 1 S: array of terms of a serie with the size n. 
+    return: sum, Sum of the serie.   
+    """
+    n = len(terms)
+    e = np.zeros((n + 1, n + 1))
+
+    for i in range(1, n + 1):
+        e[i, 1] = terms[i - 1]
+
+    for i in range(3, n + 2):
+        for j in range(3, i + 1):
+            e[i - 1, j - 1] = e[i - 2, j - 3] + 1 / (e[i - 1, j - 2] - e[i - 2, j - 2])
+
+    sumation = e[:, 1:n + 1:2]
+    return sumation[-1,-1]
+
 def simpson(func, a, b, N):
     """
     Integration by Simpson method
@@ -48,25 +67,47 @@ def Hankel_transform(func, p, n, L):
     """
     zeros = sp.jn_zeros(n, L+1) # array of the L+1 first zeros of bessel order n  
     value = 0 #Initialize the value 
-    partial_sums = []
+    terms = []
     #function to integrate
     def f(x):
         return x*func(x/p)/p**2 * sp.jv(n, x) 
     
     for i in range(L):
-       I = simpson(f, zeros[i], zeros[i+1], 1000)
+       #I = simpson(f, zeros[i], zeros[i+1], 10000)
+       I = scipy.integrate.quad(f, zeros[i], zeros[i+1])[0]
        value += I
-       partial_sums.append(I)
-    return value, partial_sums 
+       terms.append(I)
+    epsilon_value = epsilon(terms)
+    return value, terms, epsilon_value
 
 def f1(x): 
-    return x**2
+    return -2*x
 p = 1
-n = 0 
-L = 10
+n = 0
+L = 50
 
-p_value, partial_sums = Hankel_transform(f1, p, n, L)
-print(p_value)
-x = np.arange(1, len(partial_sums)+1)
-plt.plot(x, partial_sums)
-plt.show()
+p_value, terms, epsilon_value = Hankel_transform(f1, p, n, L)
+
+print(epsilon_value)
+n = np.arange(len(terms))
+plt.plot(n, terms)
+
+def ln3(n):
+    terms_ln3 = []
+    t_sum = 0
+    for i in range(n):
+        term = ((-1)**(i)) * 2**(i+1) / (i+1)
+        terms_ln3.append(term)
+        t_sum = t_sum + term
+        part_sum_ln3 = t_sum
+        
+# Erreur relative en pourcentage (pct) selon la valeur de pi de numpy
+    err_ln3_pct = 100*abs(np.log(3) - part_sum_ln3) / np.log(3)    
+    
+    return terms_ln3, part_sum_ln3, err_ln3_pct
+
+n = 100
+
+terms_ln3, part_sum_ln3, err_ln3 = ln3(n)
+
+print(epsilon(terms_ln3))
