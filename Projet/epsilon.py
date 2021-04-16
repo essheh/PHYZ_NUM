@@ -34,18 +34,17 @@ def ln3(n):
     
     return terms_ln3, part_sum_ln3, err_ln3_pct
 
-def epsilon(partial):
+def epsilon(terms):
     """
     The function returns the Sum of n terms of a serie with the epsilon algorithm.
     param 1 S: array of terms of a serie with the size n. 
     return: sum, Sum of the serie.   
     """
-    k = len(ps)
-    n = 2*k+1
+    n = len(terms)
+    #n = int((np.array(k)-1)/2)
     e = np.zeros((n + 1, n + 1))
-
     for i in range(1, n + 1):
-        e[i, 1] = partial[i - 1]
+        e[i, 1] = terms[i - 1]
 
     for i in range(3, n + 2):
         for j in range(3, i + 1):
@@ -54,36 +53,60 @@ def epsilon(partial):
     sumation = e[:, 1:n + 1:2]
     return sumation[-1,-1]
 
-k = 100
+k = 50
 sum_leibniz = []
 sum_ln3 = []
+sum_leibniz_err = []
+sum_ln3_err = []
+
 epsi_leibniz = []
+epsi_leibniz_err = []
 epsi_ln3 = []
+epsi_ln3_err = []
 
 for N in range(1,k):    
     terms_leibniz, part_sum_leibniz, err_pi = leibniz(N)
+    sum_leibniz_err.append(err_pi)
     sum_leibniz.append(part_sum_leibniz[N-1])
-    epsi = epsilon(part_sum_leibniz,N)
+    epsi = epsilon(part_sum_leibniz)
+    err = 100*abs(np.pi - epsi) / np.pi
+    epsi_leibniz_err.append(err)
     epsi_leibniz.append(epsi)
     
 for N in range(1,k):
     terms_ln3, part_sum_ln3, err_ln3 = ln3(N)
+    sum_ln3_err.append(err_ln3)
     sum_ln3.append(part_sum_ln3[N-1])
-    epsi = epsilon(part_sum_ln3,N)
+    epsi = epsilon(part_sum_ln3)
+    err = 100*abs(np.log(3) - epsi) / np.log(3)
+    epsi_ln3_err.append(err)
     epsi_ln3.append(epsi)
     
 f = list(range(1, k))
+f2 = 2*np.array(f)+1
 
-plt.plot(f,epsi_leibniz, label = 'epsilon')
+plt.plot(f2,epsi_leibniz, label = 'epsilon')
 plt.plot(f,sum_leibniz,label = 'somme')
 plt.ylim(2.5,5)
 plt.legend()
 plt.show()
 
-plt.plot(f,epsi_ln3, label = 'epsilon')
+plt.plot(f2,epsi_ln3, label = 'epsilon')
 plt.plot(f,sum_ln3,label = 'somme')
 plt.ylim(-100,100)
-plt.xlim(0,10)
+plt.legend()
+plt.show()
+
+
+plt.plot(f2,epsi_ln3_err, label = 'epsilon')
+plt.plot(f,sum_ln3_err,label = 'somme')
+plt.legend()
+plt.xlim(0,50)
+plt.yscale("log")
+plt.show()
+
+plt.plot(f2,epsi_leibniz_err, label = 'epsilon')
+plt.plot(f,sum_leibniz_err,label = 'somme')
 plt.legend()
 plt.show()
 
