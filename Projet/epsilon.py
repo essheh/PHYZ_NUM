@@ -58,7 +58,7 @@ sum_ln3 = []
 epsi_leibniz = []
 epsi_ln3 = []
 
-for N in range(1,k):
+for N in range(1,k):    
     terms_leibniz, part_sum_leibniz, err_pi = leibniz(N)
     sum_leibniz.append(part_sum_leibniz[N-1])
     epsi = epsilon(part_sum_leibniz,N)
