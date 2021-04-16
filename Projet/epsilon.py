@@ -40,6 +40,8 @@ def epsilon(partial):
     param 1 S: array of terms of a serie with the size n. 
     return: sum, Sum of the serie.   
     """
+    k = len(ps)
+    n = 2*k+1
     e = np.zeros((n + 1, n + 1))
 
     for i in range(1, n + 1):

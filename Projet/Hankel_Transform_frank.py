@@ -15,9 +15,9 @@ def epsilon(terms):
     param 1 S: array of terms of a serie with the size n. 
     return: sum, Sum of the serie.   
     """
-    n = len(terms)
+    k = len(terms)
+    n = int((np.array(k)-1)/2)
     e = np.zeros((n + 1, n + 1))
-
     for i in range(1, n + 1):
         e[i, 1] = terms[i - 1]
 
@@ -81,8 +81,8 @@ def Hankel_transform(g, p, n, L):
     return value, partial_sums, epsilon_value
 
 def f1(x): 
-    return x
-p = 50
+    return 1/x
+p = 500
 n = 0
 L = 10
 
@@ -94,7 +94,8 @@ F = []
 for i in range(1, p+1):
     F.append(Hankel_transform(f1, i, n, L)[2])
 
-x = np.arange(1, 51, 1)
+x = np.arange(1, p+1, 1)
+
 plt.plot(x, F)
-plt.plot(x, -1/x**3)
+plt.plot(x, 1/x)
 plt.show()
