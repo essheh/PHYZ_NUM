@@ -8,8 +8,6 @@ import scipy.integrate
 import numpy as np
 import scipy.special as sp
 import matplotlib.pyplot as plt
-from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,
-                               AutoMinorLocator)
 
 def epsilon(terms):
     """
@@ -75,8 +73,8 @@ def Hankel_transform(g, p, n, L):
         return x*g(x/p)/p**2 * sp.jv(n, x) 
     
     for i in range(L+1):
-       I = simpson(f, zeros[i], zeros[i+1], 10000)
-       #I = scipy.integrate.quad(f, zeros[i], zeros[i+1])[0]
+       #I = simpson(f, zeros[i], zeros[i+1], 1000)
+       I = scipy.integrate.quad(f, zeros[i], zeros[i+1])[0]
        value += I
        partial_sums.append(value)
     epsilon_value = epsilon(partial_sums)
@@ -84,36 +82,19 @@ def Hankel_transform(g, p, n, L):
 
 def f1(x): 
     return x
-p = 1
+p = 50
 n = 0
-L = 50
+L = 10
 
 p_value, partial_sums, epsilon_value = Hankel_transform(f1, p, n, L)
 
-x = np.arange(len(partial_sums))
-plt.rcParams.update({'font.size': 14})
-params = {'legend.fontsize': 9,
-          'legend.handlelength': 2}
-plt.rcParams.update(params)
-plt.plot(partial_sums, label = "$g(x) = x$")
-plt.ylabel('$A_l$')
-plt.xlabel('l')
-plt.tight_layout()
-plt.legend()
-plt.savefig('figures/Whitout_espilon_x', dpi=600)
+
+
+F = []
+for i in range(1, p+1):
+    F.append(Hankel_transform(f1, i, n, L)[2])
+
+x = np.arange(1, 51, 1)
+plt.plot(x, F)
+plt.plot(x, -1/x**3)
 plt.show()
-
-
-
-
-
-
-
-#F = []
-#for i in range(1, p+1):
-#    F.append(Hankel_transform(f1, i, n, L)[2])
-
-#x = np.arange(1, 51, 1)
-#plt.plot(x, F)
-#plt.plot(x, -1/x**3)
-#plt.show()

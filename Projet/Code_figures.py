@@ -82,8 +82,8 @@ def Hankel_transform(g, p, n, L):
         return x*g(x/p)/p**2 * sp.jv(n, x) 
     
     for i in range(L+1):
-       I = simpson(f, zeros[i], zeros[i+1], 10000)
-       #I = scipy.integrate.quad(f, zeros[i], zeros[i+1])[0]
+       #I = simpson(f, zeros[i], zeros[i+1], 10000)
+       I = scipy.integrate.quad(f, zeros[i], zeros[i+1])[0]
        value += I
        partial_sums.append(value)
     epsilon_value = epsilon(partial_sums)
@@ -91,25 +91,46 @@ def Hankel_transform(g, p, n, L):
 
 def f1(x): 
     return x
-p = 1
-n = 0
-L = 50
+p = 0.1
+n = 4
+L = 100
 
 p_value, partial_sums, epsilon_value = Hankel_transform(f1, p, n, L)
 
 x = np.arange(len(partial_sums))
-plt.rcParams.update({'font.size': 14})
+plt.rcParams.update({'font.size': 18})
 params = {'legend.fontsize': 9,
           'legend.handlelength': 2}
 plt.rcParams.update(params)
 plt.plot(partial_sums, label = "$g(x) = x$")
-plt.ylabel('$A_l$')
-plt.xlabel('l')
+plt.ylabel('$A_\ell$')
+plt.xlabel('$\ell$')
 plt.tight_layout()
 plt.legend()
 plt.savefig('figures/Whitout_espilon_x', dpi=600)
 plt.show()
 
+def f1(x): 
+    return np.cos(x)
+p = 0.1
+n = 0
+L = 1000
+
+p_value, partial_sums, epsilon_value = Hankel_transform(f1, p, n, L)
+
+x = np.arange(len(partial_sums))
+
+plt.rcParams.update({'font.size': 18})
+params = {'legend.fontsize': 9,
+          'legend.handlelength': 2}
+plt.rcParams.update(params)
+plt.plot(partial_sums, label = "$g(x) = cos(x)$")
+plt.ylabel('$A_\ell$')
+plt.xlabel('$\ell$')
+plt.tight_layout()
+plt.legend()
+plt.savefig('figures/Whitout_espilon_cos', dpi=600)
+plt.show()
 
 
 
