@@ -35,7 +35,7 @@ def epsilon(terms):
             e[i - 1, j - 1] = e[i - 2, j - 3] + 1 / (e[i - 1, j - 2] - e[i - 2, j - 2])
 
     sumation = e[:, 1:n + 1:2]
-    return sumation[-1,-1]
+    return sumation[-1,-1]  
 
 
 
@@ -91,8 +91,8 @@ def Hankel_transform(g, p, n, L):
 
 def f1(x): 
     return x
-p = 0.1
-n = 4
+p = 1
+n = 0
 L = 100
 
 p_value, partial_sums, epsilon_value = Hankel_transform(f1, p, n, L)
@@ -102,19 +102,18 @@ plt.rcParams.update({'font.size': 18})
 params = {'legend.fontsize': 9,
           'legend.handlelength': 2}
 plt.rcParams.update(params)
-plt.plot(partial_sums, label = "$g(x) = x$")
+plt.plot(partial_sums)
 plt.ylabel('$A_\ell$')
 plt.xlabel('$\ell$')
 plt.tight_layout()
-plt.legend()
 plt.savefig('figures/Whitout_espilon_x', dpi=600)
 plt.show()
 
 def f1(x): 
     return np.cos(x)
-p = 0.1
+p = 1
 n = 0
-L = 1000
+L = 100
 
 p_value, partial_sums, epsilon_value = Hankel_transform(f1, p, n, L)
 
@@ -124,24 +123,33 @@ plt.rcParams.update({'font.size': 18})
 params = {'legend.fontsize': 9,
           'legend.handlelength': 2}
 plt.rcParams.update(params)
-plt.plot(partial_sums, label = "$g(x) = cos(x)$")
+plt.plot(partial_sums)
 plt.ylabel('$A_\ell$')
 plt.xlabel('$\ell$')
 plt.tight_layout()
-plt.legend()
 plt.savefig('figures/Whitout_espilon_cos', dpi=600)
 plt.show()
 
+def f1(x): 
+    return x
+p = 41
+n = 0
+L = 20
 
 
 
 
+F = []
+for i in range(2,   p+1):
+    F.append(Hankel_transform(f1, 0.5*i, n, L)[2])
 
-#F = []
-#for i in range(1, p+1):
-#    F.append(Hankel_transform(f1, i, n, L)[2])
+x = np.arange(1, p, 1)
+plt.plot(x, F, label = "Transformée d'Hankel numérique de $g(x) = x$", marker='.', linestyle = '-')
+plt.plot(x, -1/x**3, label = "Courbe théorique H$(p)=1/p^3$", marker='.', linestyle = '-')
+plt.ylabel('H$(p)$')
+plt.xlabel('$p$')
+plt.tight_layout()
+plt.legend()
+plt.savefig('figures/Hankel_epsilon', dpi=600)
+plt.show()
 
-#x = np.arange(1, 51, 1)
-#plt.plot(x, F)
-#plt.plot(x, -1/x**3)
-#plt.show()
